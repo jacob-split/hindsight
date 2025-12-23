@@ -12,6 +12,12 @@
     },
     "version": "0.1.0"
   },
+  "servers": [
+    {
+      "url": "https://hindsight-api-3tj7l6.redglacier-0b403aab.eastus2.azurecontainerapps.io",
+      "description": "Production Azure Container Apps endpoint"
+    }
+  ],
   "paths": {
     "/health": {
       "get": {
@@ -27,6 +33,75 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/{bank_id}/": {
+      "post": {
+        "tags": ["MCP"],
+        "summary": "Model Context Protocol endpoint",
+        "description": "Streamable JSON-RPC endpoint for Model Context Protocol (MCP) requests. The bank_id is required in the path. Accepts JSON-RPC 2.0 POST requests.",
+        "operationId": "mcp_endpoint_post",
+        "parameters": [
+          {
+            "name": "bank_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"},
+            "description": "Memory bank ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jsonrpc": {"type": "string", "example": "2.0"},
+                  "id": {"type": ["string", "integer"], "example": 1},
+                  "method": {"type": "string", "example": "tools/list"},
+                  "params": {"type": ["object", "array"], "nullable": true}
+                },
+                "required": ["jsonrpc", "id", "method"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON-RPC 2.0 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jsonrpc": {"type": "string", "example": "2.0"},
+                    "id": {"type": ["string", "integer"], "example": 1},
+                    "result": {"type": ["object", "array", "string", "number", "boolean", "null"]},
+                    "error": {"type": "object", "nullable": true}
+                  },
+                  "required": ["jsonrpc", "id"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid bank_id",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object", "properties": {"error": {"type": "string"}}}
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object", "properties": {"error": {"type": "string"}}}
               }
             }
           }
