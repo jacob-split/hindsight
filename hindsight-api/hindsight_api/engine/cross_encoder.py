@@ -60,6 +60,27 @@ class CrossEncoderModel(ABC):
         pass
 
 
+class NoOpCrossEncoder(CrossEncoderModel):
+    """
+    No-op cross-encoder that returns neutral scores.
+
+    Use this when reranking is disabled (provider='none').
+    All pairs get a score of 0.5, preserving original ordering.
+    """
+
+    @property
+    def provider_name(self) -> str:
+        return "none"
+
+    async def initialize(self) -> None:
+        """No initialization needed."""
+        logger.info("Reranker: disabled (provider=none)")
+
+    def predict(self, pairs: list[tuple[str, str]]) -> list[float]:
+        """Return neutral scores for all pairs."""
+        return [0.5] * len(pairs)
+
+
 class LocalSTCrossEncoder(CrossEncoderModel):
     """
     Local cross-encoder implementation using SentenceTransformers.
@@ -289,7 +310,9 @@ def create_cross_encoder_from_env() -> CrossEncoderModel:
     """
     provider = os.environ.get(ENV_RERANKER_PROVIDER, DEFAULT_RERANKER_PROVIDER).lower()
 
-    if provider == "tei":
+    if provider == "none" or provider == "disabled":
+        return NoOpCrossEncoder()
+    elif provider == "tei":
         url = os.environ.get(ENV_RERANKER_TEI_URL)
         if not url:
             raise ValueError(f"{ENV_RERANKER_TEI_URL} is required when {ENV_RERANKER_PROVIDER} is 'tei'")
@@ -299,4 +322,4 @@ def create_cross_encoder_from_env() -> CrossEncoderModel:
         model_name = model or DEFAULT_RERANKER_LOCAL_MODEL
         return LocalSTCrossEncoder(model_name=model_name)
     else:
-        raise ValueError(f"Unknown reranker provider: {provider}. Supported: 'local', 'tei'")
+        raise ValueError(f"Unknown reranker provider: {provider}. Supported: 'none', 'local', 'tei'")

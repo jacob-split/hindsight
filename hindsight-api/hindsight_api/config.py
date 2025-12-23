@@ -16,10 +16,19 @@ ENV_LLM_PROVIDER = "HINDSIGHT_API_LLM_PROVIDER"
 ENV_LLM_API_KEY = "HINDSIGHT_API_LLM_API_KEY"
 ENV_LLM_MODEL = "HINDSIGHT_API_LLM_MODEL"
 ENV_LLM_BASE_URL = "HINDSIGHT_API_LLM_BASE_URL"
+ENV_LLM_AZURE_API_VERSION = "HINDSIGHT_API_LLM_AZURE_API_VERSION"
 
 ENV_EMBEDDINGS_PROVIDER = "HINDSIGHT_API_EMBEDDINGS_PROVIDER"
 ENV_EMBEDDINGS_LOCAL_MODEL = "HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL"
 ENV_EMBEDDINGS_TEI_URL = "HINDSIGHT_API_EMBEDDINGS_TEI_URL"
+
+# OpenAI / Azure OpenAI embeddings
+ENV_EMBEDDINGS_MODEL = "HINDSIGHT_API_EMBEDDINGS_MODEL"
+ENV_EMBEDDINGS_DIMENSIONS = "HINDSIGHT_API_EMBEDDINGS_DIMENSIONS"
+ENV_EMBEDDINGS_API_KEY = "HINDSIGHT_API_EMBEDDINGS_API_KEY"
+ENV_EMBEDDINGS_BASE_URL = "HINDSIGHT_API_EMBEDDINGS_BASE_URL"
+ENV_EMBEDDINGS_AZURE_DEPLOYMENT = "HINDSIGHT_API_EMBEDDINGS_AZURE_DEPLOYMENT"
+ENV_EMBEDDINGS_AZURE_API_VERSION = "HINDSIGHT_API_EMBEDDINGS_AZURE_API_VERSION"
 
 ENV_RERANKER_PROVIDER = "HINDSIGHT_API_RERANKER_PROVIDER"
 ENV_RERANKER_LOCAL_MODEL = "HINDSIGHT_API_RERANKER_LOCAL_MODEL"
@@ -37,11 +46,16 @@ ENV_MCP_INSTRUCTIONS = "HINDSIGHT_API_MCP_INSTRUCTIONS"
 DEFAULT_DATABASE_URL = "pg0"
 DEFAULT_LLM_PROVIDER = "openai"
 DEFAULT_LLM_MODEL = "gpt-5-mini"
+DEFAULT_LLM_AZURE_API_VERSION = "2024-02-15-preview"
 
 DEFAULT_EMBEDDINGS_PROVIDER = "local"
 DEFAULT_EMBEDDINGS_LOCAL_MODEL = "BAAI/bge-small-en-v1.5"
 
-DEFAULT_RERANKER_PROVIDER = "local"
+DEFAULT_EMBEDDINGS_MODEL = "text-embedding-3-large"
+DEFAULT_EMBEDDINGS_DIMENSIONS = 384
+DEFAULT_EMBEDDINGS_AZURE_API_VERSION = "2024-02-15-preview"
+
+DEFAULT_RERANKER_PROVIDER = "none"  # Options: 'none' (disabled), 'local' (sentence-transformers), 'tei' (remote)
 DEFAULT_RERANKER_LOCAL_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 DEFAULT_HOST = "0.0.0.0"
@@ -87,11 +101,19 @@ class HindsightConfig:
     llm_api_key: str | None
     llm_model: str
     llm_base_url: str | None
+    llm_azure_api_version: str | None
 
     # Embeddings
     embeddings_provider: str
     embeddings_local_model: str
     embeddings_tei_url: str | None
+
+    embeddings_model: str
+    embeddings_dimensions: int
+    embeddings_api_key: str | None
+    embeddings_base_url: str | None
+    embeddings_azure_deployment: str | None
+    embeddings_azure_api_version: str | None
 
     # Reranker
     reranker_provider: str
@@ -118,10 +140,18 @@ class HindsightConfig:
             llm_api_key=os.getenv(ENV_LLM_API_KEY),
             llm_model=os.getenv(ENV_LLM_MODEL, DEFAULT_LLM_MODEL),
             llm_base_url=os.getenv(ENV_LLM_BASE_URL) or None,
+            llm_azure_api_version=os.getenv(ENV_LLM_AZURE_API_VERSION, DEFAULT_LLM_AZURE_API_VERSION) or None,
             # Embeddings
             embeddings_provider=os.getenv(ENV_EMBEDDINGS_PROVIDER, DEFAULT_EMBEDDINGS_PROVIDER),
             embeddings_local_model=os.getenv(ENV_EMBEDDINGS_LOCAL_MODEL, DEFAULT_EMBEDDINGS_LOCAL_MODEL),
             embeddings_tei_url=os.getenv(ENV_EMBEDDINGS_TEI_URL),
+
+            embeddings_model=os.getenv(ENV_EMBEDDINGS_MODEL, DEFAULT_EMBEDDINGS_MODEL),
+            embeddings_dimensions=int(os.getenv(ENV_EMBEDDINGS_DIMENSIONS, str(DEFAULT_EMBEDDINGS_DIMENSIONS))),
+            embeddings_api_key=os.getenv(ENV_EMBEDDINGS_API_KEY),
+            embeddings_base_url=os.getenv(ENV_EMBEDDINGS_BASE_URL) or None,
+            embeddings_azure_deployment=os.getenv(ENV_EMBEDDINGS_AZURE_DEPLOYMENT) or None,
+            embeddings_azure_api_version=os.getenv(ENV_EMBEDDINGS_AZURE_API_VERSION, DEFAULT_EMBEDDINGS_AZURE_API_VERSION) or None,
             # Reranker
             reranker_provider=os.getenv(ENV_RERANKER_PROVIDER, DEFAULT_RERANKER_PROVIDER),
             reranker_local_model=os.getenv(ENV_RERANKER_LOCAL_MODEL, DEFAULT_RERANKER_LOCAL_MODEL),
@@ -172,7 +202,9 @@ class HindsightConfig:
         """Log the current configuration (without sensitive values)."""
         logger.info(f"Database: {self.database_url}")
         logger.info(f"LLM: provider={self.llm_provider}, model={self.llm_model}")
-        logger.info(f"Embeddings: provider={self.embeddings_provider}")
+        logger.info(
+            f"Embeddings: provider={self.embeddings_provider}, model={self.embeddings_model}, dimensions={self.embeddings_dimensions}"
+        )
         logger.info(f"Reranker: provider={self.reranker_provider}")
         logger.info(f"Graph retriever: {self.graph_retriever}")
 

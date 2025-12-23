@@ -13,7 +13,7 @@ import httpx
 from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types as genai_types
-from openai import APIConnectionError, APIStatusError, AsyncOpenAI, LengthFinishReasonError
+from openai import APIConnectionError, APIStatusError, AsyncAzureOpenAI, AsyncOpenAI, LengthFinishReasonError
 
 # Seed applied to every Groq request for deterministic behavior.
 DEFAULT_LLM_SEED = 4242
@@ -53,6 +53,7 @@ class LLMProvider:
         base_url: str,
         model: str,
         reasoning_effort: str = "low",
+        azure_api_version: str | None = None,
     ):
         """
         Initialize LLM provider.
@@ -69,6 +70,7 @@ class LLMProvider:
         self.base_url = base_url
         self.model = model
         self.reasoning_effort = reasoning_effort
+        self.azure_api_version = azure_api_version
 
         # Validate provider
         valid_providers = ["openai", "groq", "ollama", "gemini"]
@@ -92,6 +94,61 @@ class LLMProvider:
             self._client = None
         elif self.provider == "ollama":
             self._client = AsyncOpenAI(api_key="ollama", base_url=self.base_url, max_retries=0)
+            self._gemini_client = None
+        elif self.provider == "openai" and self.base_url and "/openai/v1" in self.base_url.lower() and (
+            "services.ai.azure.com" in self.base_url.lower() or "openai.azure.com" in self.base_url.lower()
+        ):
+            # Azure AI Foundry / Azure OpenAI OpenAI-v1 compatible endpoints.
+            # Example: https://<resource>.services.ai.azure.com/openai/v1/
+            # Example: https://<resource>.openai.azure.com/openai/v1/
+            normalized = self.base_url.rstrip("/")
+            self._client = AsyncOpenAI(
+                api_key="unused",
+                base_url=normalized,
+                default_headers={"api-key": self.api_key},
+                max_retries=0,
+            )
+            self._gemini_client = None
+        elif self.provider == "openai" and self.base_url and "services.ai.azure.com" in self.base_url.lower():
+            # Be forgiving: if a Foundry resource endpoint was provided without /openai/v1, add it.
+            normalized = self.base_url.rstrip("/") + "/openai/v1"
+            self._client = AsyncOpenAI(
+                api_key="unused",
+                base_url=normalized,
+                default_headers={"api-key": self.api_key},
+                max_retries=0,
+            )
+            self._gemini_client = None
+        elif self.provider == "openai" and (
+            (self.base_url and "openai.azure.com" in self.base_url.lower()) or self.azure_api_version
+        ):
+            if not self.base_url:
+                raise ValueError(
+                    "Azure OpenAI requires a base URL like https://<resource>.openai.azure.com (no /v1)"
+                )
+
+            if self.base_url.endswith("/v1"):
+                raise ValueError(
+                    "Azure OpenAI base URL should be the resource endpoint (no /v1). "
+                    f"Got: {self.base_url}"
+                )
+
+            # Normalize Azure endpoint in case a full /openai/... path was provided.
+            azure_endpoint = self.base_url
+            lower = azure_endpoint.lower()
+            openai_path_idx = lower.find("/openai/")
+            if openai_path_idx != -1:
+                azure_endpoint = azure_endpoint[:openai_path_idx]
+            azure_endpoint = azure_endpoint.rstrip("/")
+
+            api_version = self.azure_api_version or "2024-02-15-preview"
+
+            self._client = AsyncAzureOpenAI(
+                api_key=self.api_key,
+                azure_endpoint=azure_endpoint,
+                api_version=api_version,
+                max_retries=0,
+            )
             self._gemini_client = None
         else:
             # Only pass base_url if it's set (OpenAI uses default URL otherwise)
@@ -607,8 +664,16 @@ class LLMProvider:
             raise ValueError("HINDSIGHT_API_LLM_API_KEY environment variable is required")
         base_url = os.getenv("HINDSIGHT_API_LLM_BASE_URL", "")
         model = os.getenv("HINDSIGHT_API_LLM_MODEL", "openai/gpt-oss-120b")
+        azure_api_version = os.getenv("HINDSIGHT_API_LLM_AZURE_API_VERSION")
 
-        return cls(provider=provider, api_key=api_key, base_url=base_url, model=model, reasoning_effort="low")
+        return cls(
+            provider=provider,
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            reasoning_effort="low",
+            azure_api_version=azure_api_version,
+        )
 
     @classmethod
     def for_answer_generation(cls) -> "LLMProvider":
@@ -621,8 +686,16 @@ class LLMProvider:
             )
         base_url = os.getenv("HINDSIGHT_API_ANSWER_LLM_BASE_URL", os.getenv("HINDSIGHT_API_LLM_BASE_URL", ""))
         model = os.getenv("HINDSIGHT_API_ANSWER_LLM_MODEL", os.getenv("HINDSIGHT_API_LLM_MODEL", "openai/gpt-oss-120b"))
+        azure_api_version = os.getenv("HINDSIGHT_API_LLM_AZURE_API_VERSION")
 
-        return cls(provider=provider, api_key=api_key, base_url=base_url, model=model, reasoning_effort="high")
+        return cls(
+            provider=provider,
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            reasoning_effort="high",
+            azure_api_version=azure_api_version,
+        )
 
     @classmethod
     def for_judge(cls) -> "LLMProvider":
@@ -635,8 +708,16 @@ class LLMProvider:
             )
         base_url = os.getenv("HINDSIGHT_API_JUDGE_LLM_BASE_URL", os.getenv("HINDSIGHT_API_LLM_BASE_URL", ""))
         model = os.getenv("HINDSIGHT_API_JUDGE_LLM_MODEL", os.getenv("HINDSIGHT_API_LLM_MODEL", "openai/gpt-oss-120b"))
+        azure_api_version = os.getenv("HINDSIGHT_API_LLM_AZURE_API_VERSION")
 
-        return cls(provider=provider, api_key=api_key, base_url=base_url, model=model, reasoning_effort="high")
+        return cls(
+            provider=provider,
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            reasoning_effort="high",
+            azure_api_version=azure_api_version,
+        )
 
 
 # Backwards compatibility alias

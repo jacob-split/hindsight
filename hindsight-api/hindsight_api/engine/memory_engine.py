@@ -242,6 +242,7 @@ class MemoryEngine(MemoryEngineInterface):
             raise ValueError("LLM API key is required. Set HINDSIGHT_API_LLM_API_KEY environment variable.")
         memory_llm_model = memory_llm_model or config.llm_model
         memory_llm_base_url = memory_llm_base_url or config.get_llm_base_url() or None
+        memory_llm_azure_api_version = config.llm_azure_api_version
         # Track pg0 instance (if used)
         self._pg0: EmbeddedPostgres | None = None
         self._pg0_instance_name: str | None = None
@@ -310,6 +311,7 @@ class MemoryEngine(MemoryEngineInterface):
             api_key=memory_llm_api_key,
             base_url=memory_llm_base_url,
             model=memory_llm_model,
+            azure_api_version=memory_llm_azure_api_version,
         )
 
         # Store client and model for convenience (deprecated: use _llm_config.call() instead)

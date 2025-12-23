@@ -10,6 +10,7 @@ Stop with Ctrl+C.
 import argparse
 import asyncio
 import atexit
+import dataclasses
 import os
 import signal
 import sys
@@ -108,27 +109,13 @@ def main():
 
     args = parser.parse_args()
 
-    # Configure Python logging based on log level
-    # Update config with CLI override if provided
-    if args.log_level != config.log_level:
-        config = HindsightConfig(
-            database_url=config.database_url,
-            llm_provider=config.llm_provider,
-            llm_api_key=config.llm_api_key,
-            llm_model=config.llm_model,
-            llm_base_url=config.llm_base_url,
-            embeddings_provider=config.embeddings_provider,
-            embeddings_local_model=config.embeddings_local_model,
-            embeddings_tei_url=config.embeddings_tei_url,
-            reranker_provider=config.reranker_provider,
-            reranker_local_model=config.reranker_local_model,
-            reranker_tei_url=config.reranker_tei_url,
-            host=args.host,
-            port=args.port,
-            log_level=args.log_level,
-            mcp_enabled=config.mcp_enabled,
-            graph_retriever=config.graph_retriever,
-        )
+    # Apply CLI overrides without re-specifying every config field.
+    config = dataclasses.replace(
+        config,
+        host=args.host,
+        port=args.port,
+        log_level=args.log_level,
+    )
     config.configure_logging()
     config.log_config()
 
