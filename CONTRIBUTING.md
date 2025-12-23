@@ -1,77 +1,93 @@
-# Contributing to Hindsight
+## Setting up the environment
 
-Thanks for your interest in contributing to Hindsight!
+This repository uses [`pnpm`](https://pnpm.io/).
+Other package managers may work but are not officially supported for development.
 
-## Getting Started
+To set up the repository, run:
 
-1. Fork and clone the repository
-   ```bash
-   git clone git@github.com:vectorize-io/hindsight.git
-   cd hindsight
-   ```
-2. Set up your environment:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit the .env to add LLM API key and config as required
-
-3. Install dependencies:
-   ```bash
-   # Python dependencies
-   uv sync --directory hindsight-api/
-
-   # Node dependencies (uses npm workspaces)
-   npm install
-   ```
-
-## Development
-
-### Running the API locally
-
-```bash
-./scripts/dev/start-api.sh
+```sh
+$ pnpm install
+$ pnpm build
 ```
 
-### Running the Control Plane locally
+This will install all the required dependencies and build output files to `dist/`.
 
-```bash
-./scripts/dev/start-control-plane.sh
+## Modifying/Adding code
+
+Most of the SDK is generated code. Modifications to code will be persisted between generations, but may
+result in merge conflicts between manual patches and changes from the generator. The generator will never
+modify the contents of the `src/lib/` and `examples/` directories.
+
+## Adding and running examples
+
+All files in the `examples/` directory are not modified by the generator and can be freely edited or added to.
+
+```ts
+// add an example to examples/<your-example>.ts
+
+#!/usr/bin/env -S npm run tsn -T
+…
 ```
 
-### Running the documentation locally
-
-```bash
-./scripts/dev/start-docs.sh
+```sh
+$ chmod +x examples/<your-example>.ts
+# run the example against your api
+$ pnpm tsn -T examples/<your-example>.ts
 ```
 
-### Running tests
+## Using the repository from source
 
-```bash
-cd hindsight-api
-uv run pytest tests/
+If you’d like to use the repository from source, you can either install from git or link to a cloned repository:
+
+To install via git:
+
+```sh
+$ npm install git+ssh://git@github.com:stainless-sdks/hindsight-typescript.git
 ```
 
-### Code style
+Alternatively, to link a local copy of the repo:
 
-- Use Python type hints
-- Follow existing code patterns
-- Keep functions focused and well-named
+```sh
+# Clone
+$ git clone https://www.github.com/stainless-sdks/hindsight-typescript
+$ cd hindsight-typescript
 
-## Pull Requests
+# With yarn
+$ yarn link
+$ cd ../my-package
+$ yarn link hindsight
 
-1. Create a feature branch from `main`
-2. Make your changes
-3. Run tests to ensure nothing breaks
-4. Submit a PR with a clear description of changes
+# With pnpm
+$ pnpm link --global
+$ cd ../my-package
+$ pnpm link -—global hindsight
+```
 
-## Reporting Issues
+## Running tests
 
-Open an issue on GitHub with:
-- Clear description of the problem
-- Steps to reproduce
-- Expected vs actual behavior
-- Environment details (OS, Python version)
+Most tests require you to [set up a mock server](https://github.com/stoplightio/prism) against the OpenAPI spec to run the tests.
 
-## Questions?
+```sh
+$ npx prism mock path/to/your/openapi.yml
+```
 
-Open a discussion on GitHub or reach out to the maintainers.
+```sh
+$ pnpm run test
+```
+
+## Linting and formatting
+
+This repository uses [prettier](https://www.npmjs.com/package/prettier) and
+[eslint](https://www.npmjs.com/package/eslint) to format the code in the repository.
+
+To lint:
+
+```sh
+$ pnpm lint
+```
+
+To format and fix all lint issues automatically:
+
+```sh
+$ pnpm fix
+```
