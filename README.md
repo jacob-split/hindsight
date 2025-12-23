@@ -1,262 +1,356 @@
-<div align="center">
+# Hindsight TypeScript API Library
 
-![Hindsight Banner](./hindsight-docs/static/img/banner.svg)
+[![NPM version](<https://img.shields.io/npm/v/hindsight.svg?label=npm%20(stable)>)](https://npmjs.org/package/hindsight) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/hindsight)
 
-[Documentation](https://hindsight.vectorize.io) • [Paper](https://arxiv.org/abs/2512.12818) • [Cookbook](https://hindsight.vectorize.io/cookbook) • [Hindsight Cloud](https://vectorize.io/hindsight/cloud)
+This library provides convenient access to the Hindsight REST API from server-side TypeScript or JavaScript.
 
-[![CI](https://github.com/vectorize-io/hindsight/actions/workflows/release.yml/badge.svg)](https://github.com/vectorize-io/hindsight/actions/workflows/release.yml)
-[![Slack Community](https://img.shields.io/badge/Slack-Join%20Community-4A154B?logo=slack)](https://join.slack.com/t/hindsight-space/shared_invite/zt-3klo21kua-VUCC_zHP5rIcXFB1_5yw6A)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/hindsight-api?label=PyPI)
-![NPM Downloads](https://img.shields.io/npm/dm/%40vectorize-io%2Fhindsight-client?logoColor=orange&label=NPM&color=blue&link=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2F%40vectorize-io%2Fhindsight-client)
+The full API of this library can be found in [api.md](api.md).
 
+It is generated with [Stainless](https://www.stainless.com/).
 
-</div>
+## Installation
 
----
-
-## What is Hindsight?
-
-Hindsight™ is an agent memory system built to create smarter agents that learn over time. It eliminates the shortcomings of alternative techniques such as RAG and knowledge graph and delivers state-of-the-art performance on long term memory tasks.
-
-Hindsight addresses common challenges that have frustrated AI engineers building agents to automate tasks and assist users with conversational interfaces. Many of these challenges stem directly from a lack of memory.
-
-- **Inconsistency:** Agents complete tasks successfully one time, then fail when asked to complete the same task again. Memory gives the agent a mechanism to remember what worked and what didn't and to use that information to reduce errors and improve consistency.
-- **Hallucinations:** Long term memory can be seeded with external knowledge to ground agent behavior in reliable sources to augment training data.
-- **Cognitive Overload:** As workflows get complex, retrievals, tool calls, user messages and agent responses can grow to fill the context window leading to context rot. Short term memory optimization allows agents to reduce tokens and focus context by removing irrelevant details.
-
-## How is Hindsight Different From Other Memory Systems?
-
-![Overview](./hindsight-docs/static/img/hindsight-overview.webp)
-
-Most agent memory implementation rely on basic vector search or sometimes use a knowledge graph. Hindsight uses biomimetic data structures to organize agent memories in a way that is more like how human memory works:
-
-- **World:** Facts about the world ("The stove gets hot")
-- **Experiences:** Agent's own experiences ("I touched the stove and it really hurt")
-- **Opinion:** Beliefs with confidence scores ("I shouldn't touch the stove again" - .99 confidence)
-- **Observation:** Complex mental models derived by reflecting on facts and experiences ("Curling irons, ovens, and fire are also hot. I shouldn't touch those either.")
-
-Memories in Hindsight are stored in banks (i.e. memory banks). When memories are added to Hindsight, they are pushed into either the world facts or experiences memory pathway. They are then represented as a combination of entities, relationships, and time series with sparse/dense vector representations to aid in later recall.
-
-Hindsight provides three simple methods to interact with the system:
-
-- **Retain:** Provide information to Hindsight that you want it to remember
-- **Recall:** Retrieve memories from Hindsight
-- **Reflect:** Reflect on memories and experiences to generate new observations and insights from existing memories.
-
-### Agent Memory That Learns
-
-A key goal of Hindsight is to build agent memory that enables agents to learn and improve over time. This is the role of the `reflect` operation which provides the agent to form broader opinions and observations over time.
-
-For example, imagine a product support agent that is helping a user troubleshoot a problem. It uses a `search-documentation` tool it found on an MCP server. Later in the conversation, the agent discovers that the documentation returned from the tool wasn't for the product the user was asking about. The agent now has an experience in its memory bank. And just like humans, we want that agent to learn from its experience.
-
-As the agent gains more experiences, `reflect` allows the agent to form observations about what worked, what didn't, and what to do differently the next time it encounters a similar task.
-
----
-
-## Memory Performance & Accuracy
-
-Hindsight has achieved state-of-the-art performance on the LongMemEval benchmark, widely used to assess memory system performance across a variety of conversational
-AI scenarios. The current reported performance of Hindsight and other agent memory solutions as of December 2025 is shown here:
-
-![Overview](./hindsight-docs/static/img/hindsight-bench.jpg)
-
-The benchmark performance data for Hindsight and GPT-4o (full context) have been reproduced by research collaborators at the Virginia Tech [Sanghani Center for Artificial Intelligence and Data Analytics](https://sanghani.cs.vt.edu/) and The Washington Post. Other scores are self-reported by software vendors.
-
-A thorough examination of the techniques implemented in Hindsight and detailed breakdowns of benchmark performance are [available on arXiv](https://arxiv.org/abs/2512.12818). This research is currently being prepared for conference submission and the wider peer review process.
-
-The benchmark results from this research can be inspected in our [visual benchmark explorer](https://hindsight-benchmarks.vercel.app). As additional improvements are made to Hindsight, new benchmark data will be available for review using this same tool.
-
-## Quick Start
-
-### Docker (recommended)
-
-```bash
-export OPENAI_API_KEY=your-key
-
-docker run --rm -it --pull always -p 8888:8888 -p 9999:9999 \
-  -e HINDSIGHT_API_LLM_API_KEY=$OPENAI_API_KEY \
-  -e HINDSIGHT_API_LLM_MODEL=o3-mini \
-  -v $HOME/.hindsight-docker:/home/hindsight/.pg0 \
-  ghcr.io/vectorize-io/hindsight:latest
+```sh
+npm install hindsight
 ```
 
-API: http://localhost:8888  
-UI: http://localhost:9999
+## Usage
 
-Install client:
+The full API of this library can be found in [api.md](api.md).
 
-```bash
-pip install hindsight-client -U
-# or
-npm install @vectorize-io/hindsight-client
+<!-- prettier-ignore -->
+```js
+import Hindsight from 'hindsight';
+
+const client = new Hindsight({
+  apiKey: process.env['HINDSIGHT_API_KEY'], // This is the default and can be omitted
+});
+
+const response = await client.health.check();
 ```
 
-Python example:
+### Request & Response types
 
-```python
-from hindsight_client import Hindsight
+This library includes TypeScript definitions for all request params and response fields. You may import and use them like so:
 
-client = Hindsight(base_url="http://localhost:8888")
+<!-- prettier-ignore -->
+```ts
+import Hindsight from 'hindsight';
 
-# Retain: Store information
-client.retain(bank_id="my-bank", content="Alice works at Google as a software engineer")
+const client = new Hindsight({
+  apiKey: process.env['HINDSIGHT_API_KEY'], // This is the default and can be omitted
+});
 
-# Recall: Search memories
-client.recall(bank_id="my-bank", query="What does Alice do?")
-
-# Reflect: Generate disposition-aware response
-client.reflect(bank_id="my-bank", query="Tell me about Alice")
+const response: unknown = await client.health.check();
 ```
 
-### Python (embedded, no Docker)
+Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
 
-```bash
-pip install hindsight-all -U
+## Handling errors
+
+When the library is unable to connect to the API,
+or if the API returns a non-success status code (i.e., 4xx or 5xx response),
+a subclass of `APIError` will be thrown:
+
+<!-- prettier-ignore -->
+```ts
+const response = await client.health.check().catch(async (err) => {
+  if (err instanceof Hindsight.APIError) {
+    console.log(err.status); // 400
+    console.log(err.name); // BadRequestError
+    console.log(err.headers); // {server: 'nginx', ...}
+  } else {
+    throw err;
+  }
+});
 ```
 
-```python
-import os
-from hindsight import HindsightServer, HindsightClient
+Error codes are as follows:
 
-with HindsightServer(
-    llm_provider="openai",
-    llm_model="gpt-5-mini", 
-    llm_api_key=os.environ["OPENAI_API_KEY"]
-) as server:
-    client = HindsightClient(base_url=server.url)
-    client.retain(bank_id="my-bank", content="Alice works at Google")
-    results = client.recall(bank_id="my-bank", query="Where does Alice work?")
+| Status Code | Error Type                 |
+| ----------- | -------------------------- |
+| 400         | `BadRequestError`          |
+| 401         | `AuthenticationError`      |
+| 403         | `PermissionDeniedError`    |
+| 404         | `NotFoundError`            |
+| 422         | `UnprocessableEntityError` |
+| 429         | `RateLimitError`           |
+| >=500       | `InternalServerError`      |
+| N/A         | `APIConnectionError`       |
+
+### Retries
+
+Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
+Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict,
+429 Rate Limit, and >=500 Internal errors will all be retried by default.
+
+You can use the `maxRetries` option to configure or disable this:
+
+<!-- prettier-ignore -->
+```js
+// Configure the default for all requests:
+const client = new Hindsight({
+  maxRetries: 0, // default is 2
+});
+
+// Or, configure per-request:
+await client.health.check({
+  maxRetries: 5,
+});
 ```
 
-### Node.js / TypeScript
+### Timeouts
 
-```bash
-npm install @vectorize-io/hindsight-client
+Requests time out after 1 minute by default. You can configure this with a `timeout` option:
+
+<!-- prettier-ignore -->
+```ts
+// Configure the default for all requests:
+const client = new Hindsight({
+  timeout: 20 * 1000, // 20 seconds (default is 1 minute)
+});
+
+// Override per-request:
+await client.health.check({
+  timeout: 5 * 1000,
+});
 ```
 
-```javascript
-const { HindsightClient } = require('@vectorize-io/hindsight-client');
+On timeout, an `APIConnectionTimeoutError` is thrown.
 
-const client = new HindsightClient({ baseUrl: 'http://localhost:8888' });
+Note that requests which time out will be [retried twice by default](#retries).
 
-await client.retain('my-bank', 'Alice loves hiking in Yosemite');
-await client.recall('my-bank', 'What does Alice like?');
+## Advanced Usage
+
+### Accessing raw Response data (e.g., headers)
+
+The "raw" `Response` returned by `fetch()` can be accessed through the `.asResponse()` method on the `APIPromise` type that all methods return.
+This method returns as soon as the headers for a successful response are received and does not consume the response body, so you are free to write custom parsing or streaming logic.
+
+You can also use the `.withResponse()` method to get the raw `Response` along with the parsed data.
+Unlike `.asResponse()` this method consumes the body, returning once it is parsed.
+
+<!-- prettier-ignore -->
+```ts
+const client = new Hindsight();
+
+const response = await client.health.check().asResponse();
+console.log(response.headers.get('X-My-Header'));
+console.log(response.statusText); // access the underlying Response object
+
+const { data: response, response: raw } = await client.health.check().withResponse();
+console.log(raw.headers.get('X-My-Header'));
+console.log(response);
 ```
 
----
+### Logging
 
-## Architecture & Operations
+> [!IMPORTANT]
+> All log messages are intended for debugging only. The format and content of log messages
+> may change between releases.
 
-### Retain
+#### Log levels
 
-The `retain` operation is used to push new memories into Hindsight. It tells Hindsight to _retain_ the information you pass in as an input.
+The log level can be configured in two ways:
 
-```python
-from hindsight_client import Hindsight
+1. Via the `HINDSIGHT_LOG` environment variable
+2. Using the `logLevel` client option (overrides the environment variable if set)
 
-client = Hindsight(base_url="http://localhost:8888")
+```ts
+import Hindsight from 'hindsight';
 
-# Simple
-client.retain(
-    bank_id="my-bank",
-    content="Alice works at Google as a software engineer"
-)
-
-# With context and timestamp
-client.retain(
-    bank_id="my-bank",
-    content="Alice got promoted to senior engineer",
-    context="career update",
-    timestamp="2025-06-15T10:00:00Z"
-)
+const client = new Hindsight({
+  logLevel: 'debug', // Show all log messages
+});
 ```
 
-Behind the scenes, the retain operation uses an LLM to extract key facts, temporal data, entities, and relationships. It passes these through a normalization process to transform extracted data into canonical entities, time series, and search indexes along with metadata. These representations create the pathways for accurate memory retrieval in the recall and reflect operations. 
+Available log levels, from most to least verbose:
 
-![Retain Operation](hindsight-docs/static/img/retain-operation.webp)
+- `'debug'` - Show debug messages, info, warnings, and errors
+- `'info'` - Show info messages, warnings, and errors
+- `'warn'` - Show warnings and errors (default)
+- `'error'` - Show only errors
+- `'off'` - Disable all logging
 
-### Recall
+At the `'debug'` level, all HTTP requests and responses are logged, including headers and bodies.
+Some authentication-related headers are redacted, but sensitive data in request and response bodies
+may still be visible.
 
-The recall operation is used to retrieve memories. These memories can come from any of the memory types (world, experiences, etc.)
+#### Custom logger
 
-```python
-from hindsight_client import Hindsight
+By default, this library logs to `globalThis.console`. You can also provide a custom logger.
+Most logging libraries are supported, including [pino](https://www.npmjs.com/package/pino), [winston](https://www.npmjs.com/package/winston), [bunyan](https://www.npmjs.com/package/bunyan), [consola](https://www.npmjs.com/package/consola), [signale](https://www.npmjs.com/package/signale), and [@std/log](https://jsr.io/@std/log). If your logger doesn't work, please open an issue.
 
-client = Hindsight(base_url="http://localhost:8888")
+When providing a custom logger, the `logLevel` option still controls which messages are emitted, messages
+below the configured level will not be sent to your logger.
 
-# Simple
-client.recall(bank_id="my-bank", query="What does Alice do?")
+```ts
+import Hindsight from 'hindsight';
+import pino from 'pino';
 
-# Temporal
-client.recall(bank_id="my-bank", query="What happened in June?")
+const logger = pino();
+
+const client = new Hindsight({
+  logger: logger.child({ name: 'Hindsight' }),
+  logLevel: 'debug', // Send all messages to pino, allowing it to filter
+});
 ```
 
-Recall performs 4 retrieval strategies in parallel:
-- Semantic: Vector similarity
-- Keyword: BM25 exact matching
-- Graph: Entity/temporal/causal links
-- Temporal: Time range filtering
+### Making custom/undocumented requests
 
-![Retain Operation](hindsight-docs/static/img/recall-operation.webp)
+This library is typed for convenient access to the documented API. If you need to access undocumented
+endpoints, params, or response properties, the library can still be used.
 
-The individual results from the retrievals are merged, then ordered by relevance using reciprocal rank fusion and a cross-encoder reranking model.
+#### Undocumented endpoints
 
-The final output is trimmed as needed to fit within the token limit.
+To make requests to undocumented endpoints, you can use `client.get`, `client.post`, and other HTTP verbs.
+Options on the client, such as retries, will be respected when making these requests.
 
-### Reflect
-
-The reflect operation is used to perform a more thorough analysis of existing memories. This allows the agent to form new connections between memories which are then persisted as opinions and/or observations. When building agents, the reflect operation is a key capability to enable the agent to learn from its experiences. 
-
-For example, the `reflect` operation can be used to support use cases such as:
-
-- An **AI Project Manager** reflecting on what risks need to be mitigated on a project.
-- A **Sales Agent** reflecting on why certain outreach messages have gotten responses while others haven't.
-- A **Support Agent** reflecting on opportunities where customers have questions not answered by current product documentation.
-
-The `reflect` operation can also be used to handle on-demand question answering or analysis which require more deep thinking.
-
-```python
-from hindsight_client import Hindsight
-
-client = Hindsight(base_url="http://localhost:8888")
-
-client.reflect(bank_id="my-bank", query="What should I know about Alice?")
+```ts
+await client.post('/some/path', {
+  body: { some_prop: 'foo' },
+  query: { some_query_arg: 'bar' },
+});
 ```
 
-![Retain Operation](hindsight-docs/static/img/reflect-operation.webp)
+#### Undocumented request params
 
----
+To make requests using undocumented parameters, you may use `// @ts-expect-error` on the undocumented
+parameter. This library doesn't validate at runtime that the request matches the type, so any extra values you
+send will be sent as-is.
 
-## Resources
+```ts
+client.health.check({
+  // ...
+  // @ts-expect-error baz is not yet public
+  baz: 'undocumented option',
+});
+```
 
-**Documentation:** 
-- [https://hindsight.vectorize.io](https://hindsight.vectorize.io)
+For requests with the `GET` verb, any extra params will be in the query, all other requests will send the
+extra param in the body.
 
-**Clients:**
-- [Python](http://hindsight.vectorize.io/sdks/python)
-- [Node.js](http://hindsight.vectorize.io/sdks/nodejs)
-- [REST API](https://hindsight.vectorize.io/api-reference)
-- [CLI](https://hindsight.vectorize.io/sdks/cli)
+If you want to explicitly send an extra argument, you can do so with the `query`, `body`, and `headers` request
+options.
 
-**Community:**
-- [Slack](https://join.slack.com/t/hindsight-space/shared_invite/zt-3klo21kua-VUCC_zHP5rIcXFB1_5yw6A)
-- [GitHub Issues](https://github.com/vectorize-io/hindsight/issues)
+#### Undocumented response properties
 
----
-## Star History
+To access undocumented response properties, you may access the response object with `// @ts-expect-error` on
+the response object, or cast the response object to the requisite type. Like the request params, we do not
+validate or strip extra properties from the response from the API.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=vectorize-io/hindsight&type=date&legend=top-left)](https://www.star-history.com/#vectorize-io/hindsight&type=date&legend=top-left)
----
+### Customizing the fetch client
+
+By default, this library expects a global `fetch` function is defined.
+
+If you want to use a different `fetch` function, you can either polyfill the global:
+
+```ts
+import fetch from 'my-fetch';
+
+globalThis.fetch = fetch;
+```
+
+Or pass it to the client:
+
+```ts
+import Hindsight from 'hindsight';
+import fetch from 'my-fetch';
+
+const client = new Hindsight({ fetch });
+```
+
+### Fetch options
+
+If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
+
+```ts
+import Hindsight from 'hindsight';
+
+const client = new Hindsight({
+  fetchOptions: {
+    // `RequestInit` options
+  },
+});
+```
+
+#### Configuring proxies
+
+To modify proxy behavior, you can provide custom `fetchOptions` that add runtime-specific proxy
+options to requests:
+
+<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
+
+```ts
+import Hindsight from 'hindsight';
+import * as undici from 'undici';
+
+const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
+const client = new Hindsight({
+  fetchOptions: {
+    dispatcher: proxyAgent,
+  },
+});
+```
+
+<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/bun.svg" align="top" width="18" height="21"> **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
+
+```ts
+import Hindsight from 'hindsight';
+
+const client = new Hindsight({
+  fetchOptions: {
+    proxy: 'http://localhost:8888',
+  },
+});
+```
+
+<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/deno.svg" align="top" width="18" height="21"> **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
+
+```ts
+import Hindsight from 'npm:hindsight';
+
+const httpClient = Deno.createHttpClient({ proxy: { url: 'http://localhost:8888' } });
+const client = new Hindsight({
+  fetchOptions: {
+    client: httpClient,
+  },
+});
+```
+
+## Frequently Asked Questions
+
+## Semantic versioning
+
+This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
+
+1. Changes that only affect static types, without breaking runtime behavior.
+2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
+3. Changes that we do not expect to impact the vast majority of users in practice.
+
+We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
+
+We are keen for your feedback; please open an [issue](https://www.github.com/jacob-split/hindsight/issues) with questions, bugs, or suggestions.
+
+## Requirements
+
+TypeScript >= 4.9 is supported.
+
+The following runtimes are supported:
+
+- Web browsers (Up-to-date Chrome, Firefox, Safari, Edge, and more)
+- Node.js 20 LTS or later ([non-EOL](https://endoflife.date/nodejs)) versions.
+- Deno v1.28.0 or higher.
+- Bun 1.0 or later.
+- Cloudflare Workers.
+- Vercel Edge Runtime.
+- Jest 28 or greater with the `"node"` environment (`"jsdom"` is not supported at this time).
+- Nitro v2.6 or greater.
+
+Note that React Native is not supported at this time.
+
+If you are interested in other runtime environments, please open or upvote an issue on GitHub.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## License
-
-MIT — see [LICENSE](./LICENSE)
-
----
-
-Built by [Vectorize.io](https://vectorize.io)
+See [the contributing documentation](./CONTRIBUTING.md).
