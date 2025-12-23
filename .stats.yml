@@ -1,4 +1,4 @@
 configured_endpoints: 25
 openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/split%2Fhindsight-02b64523acf2e2df2599597b44c3060726dd0de6aee1d17b83977886a8f421e8.yml
 openapi_spec_hash: b750b718019bc97d10b10f207abfc381
-config_hash: 6512f5d735235f6f7009190d2ccc2556
+config_hash: b173ca9f3d86754faca352f4aae338b7

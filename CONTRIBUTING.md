@@ -42,15 +42,15 @@ If you’d like to use the repository from source, you can either install from g
 To install via git:
 
 ```sh
-$ npm install git+ssh://git@github.com:stainless-sdks/hindsight-typescript.git
+$ npm install git+ssh://git@github.com:jacob-split/hindsight.git
 ```
 
 Alternatively, to link a local copy of the repo:
 
 ```sh
 # Clone
-$ git clone https://www.github.com/stainless-sdks/hindsight-typescript
-$ cd hindsight-typescript
+$ git clone https://www.github.com/jacob-split/hindsight
+$ cd hindsight
 
 # With yarn
 $ yarn link
