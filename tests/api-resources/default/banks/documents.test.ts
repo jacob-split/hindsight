@@ -43,7 +43,11 @@ describe('resource documents', () => {
     await expect(
       client.default.banks.documents.list(
         'bank_id',
-        { limit: 0, offset: 0, q: 'q' },
+        {
+          limit: 0,
+          offset: 0,
+          q: 'q',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Hindsight.NotFoundError);

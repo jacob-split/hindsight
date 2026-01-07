@@ -10,7 +10,11 @@ const client = new Hindsight({
 describe('resource mcp', () => {
   // Prism tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.mcp.create('bank_id', { id: 1, jsonrpc: '2.0', method: 'tools/list' });
+    const responsePromise = client.mcp.create('bank_id', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'tools/list',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

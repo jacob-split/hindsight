@@ -26,7 +26,12 @@ describe('resource memories', () => {
     await expect(
       client.default.banks.memories.list(
         'bank_id',
-        { limit: 0, offset: 0, q: 'q', type: 'type' },
+        {
+          limit: 0,
+          offset: 0,
+          q: 'q',
+          type: 'type',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Hindsight.NotFoundError);
@@ -71,7 +76,10 @@ describe('resource memories', () => {
     const response = await client.default.banks.memories.recall('bank_id', {
       query: 'What did Alice say about machine learning?',
       budget: 'mid',
-      include: { chunks: { max_tokens: 0 }, entities: { max_tokens: 500 } },
+      include: {
+        chunks: { max_tokens: 0 },
+        entities: { max_tokens: 500 },
+      },
       max_tokens: 4096,
       query_timestamp: '2023-05-30T23:40:00',
       trace: true,
