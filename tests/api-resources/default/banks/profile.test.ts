@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource profile', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.default.banks.profile.retrieve('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -20,10 +20,14 @@ describe('resource profile', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('update: only required params', async () => {
     const responsePromise = client.default.banks.profile.update('bank_id', {
-      disposition: { empathy: 3, literalism: 3, skepticism: 3 },
+      disposition: {
+        empathy: 3,
+        literalism: 3,
+        skepticism: 3,
+      },
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -34,10 +38,14 @@ describe('resource profile', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('update: required and optional params', async () => {
     const response = await client.default.banks.profile.update('bank_id', {
-      disposition: { empathy: 3, literalism: 3, skepticism: 3 },
+      disposition: {
+        empathy: 3,
+        literalism: 3,
+        skepticism: 3,
+      },
     });
   });
 });

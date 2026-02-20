@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource entities', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: only required params', async () => {
     const responsePromise = client.default.banks.entities.retrieve('entity_id', { bank_id: 'bank_id' });
     const rawResponse = await responsePromise.asResponse();
@@ -20,12 +20,12 @@ describe('resource entities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: required and optional params', async () => {
     const response = await client.default.banks.entities.retrieve('entity_id', { bank_id: 'bank_id' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.default.banks.entities.list('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -37,7 +37,7 @@ describe('resource entities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
@@ -45,7 +45,7 @@ describe('resource entities', () => {
     ).rejects.toThrow(Hindsight.NotFoundError);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('regenerate: only required params', async () => {
     const responsePromise = client.default.banks.entities.regenerate('entity_id', { bank_id: 'bank_id' });
     const rawResponse = await responsePromise.asResponse();
@@ -57,7 +57,7 @@ describe('resource entities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('regenerate: required and optional params', async () => {
     const response = await client.default.banks.entities.regenerate('entity_id', { bank_id: 'bank_id' });
   });

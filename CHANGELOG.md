@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.1.1 (2026-02-20)
+
+Full Changelog: [v0.1.0...v0.1.1](https://github.com/jacob-split/hindsight/compare/v0.1.0...v0.1.1)
+
+### Bug Fixes
+
+* **client:** avoid memory leak with abort signals ([b761aae](https://github.com/jacob-split/hindsight/commit/b761aaea5954dc4bd146d5f79213c7564aa3b63a))
+* **client:** avoid removing abort listener too early ([d1a03c7](https://github.com/jacob-split/hindsight/commit/d1a03c77d3b5ee56a5e827fb32ceab4f1d8d12da))
+
+
+### Chores
+
+* break long lines in snippets into multiline ([a47a43f](https://github.com/jacob-split/hindsight/commit/a47a43fb7c7c04ba3b98c34e5fdb361cde547601))
+* **ci:** upgrade `actions/github-script` ([870eb5a](https://github.com/jacob-split/hindsight/commit/870eb5ab5cd16faf6d396ae1f0acc60b802e634d))
+* **client:** do not parse responses with empty content-length ([dc9d480](https://github.com/jacob-split/hindsight/commit/dc9d480771faadc5d7bb99ef9303c1e744170d2b))
+* **client:** restructure abort controller binding ([19cae42](https://github.com/jacob-split/hindsight/commit/19cae4281f4d840e8a4e129c9da68080fbf25d82))
+* **internal/client:** fix form-urlencoded requests ([dfd492b](https://github.com/jacob-split/hindsight/commit/dfd492bfb2f011c56a8da46beb89001a242bed9f))
+* **internal:** avoid type checking errors with ts-reset ([efef91e](https://github.com/jacob-split/hindsight/commit/efef91ee854e0b97b510cb0360831ea13473fb0f))
+* **internal:** codegen related update ([aa6960d](https://github.com/jacob-split/hindsight/commit/aa6960ddd7eab82702c08842939026f548998765))
+* **internal:** remove mock server code ([93da41b](https://github.com/jacob-split/hindsight/commit/93da41b9abc6a2b49a92300dd0e4989f7cb3a081))
+* **internal:** update `actions/checkout` version ([edb62dd](https://github.com/jacob-split/hindsight/commit/edb62dd872e06b8b1ddc3e675ad0ae451158e1be))
+* **internal:** update lock file ([df39a32](https://github.com/jacob-split/hindsight/commit/df39a32619e73ca98c008f832c2ed3b850e2d68f))
+* **internal:** upgrade babel, qs, js-yaml ([60097ce](https://github.com/jacob-split/hindsight/commit/60097ce7e81c8c4609a28e83b4a1b8b730211048))
+* **internal:** upgrade brace-expansion and @babel/helpers ([fdf8b81](https://github.com/jacob-split/hindsight/commit/fdf8b8155674b16b96a3d00a39a72eda947fc0f1))
+* **internal:** upgrade pnpm ([0063b0a](https://github.com/jacob-split/hindsight/commit/0063b0a4e105ce4907f3f19bc3017244a6be3b09))
+* update mock server docs ([825c0fa](https://github.com/jacob-split/hindsight/commit/825c0fad6cebcc3a17a3f215f8eee31f74adb5a6))
+
 ## 0.1.0 (2025-12-23)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/jacob-split/hindsight/compare/v0.0.1...v0.1.0)

@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource memories', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.default.banks.memories.list('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -20,19 +20,24 @@ describe('resource memories', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.default.banks.memories.list(
         'bank_id',
-        { limit: 0, offset: 0, q: 'q', type: 'type' },
+        {
+          limit: 0,
+          offset: 0,
+          q: 'q',
+          type: 'type',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Hindsight.NotFoundError);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('clear', async () => {
     const responsePromise = client.default.banks.memories.clear('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -44,7 +49,7 @@ describe('resource memories', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('clear: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
@@ -52,7 +57,7 @@ describe('resource memories', () => {
     ).rejects.toThrow(Hindsight.NotFoundError);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('recall: only required params', async () => {
     const responsePromise = client.default.banks.memories.recall('bank_id', {
       query: 'What did Alice say about machine learning?',
@@ -66,12 +71,15 @@ describe('resource memories', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('recall: required and optional params', async () => {
     const response = await client.default.banks.memories.recall('bank_id', {
       query: 'What did Alice say about machine learning?',
       budget: 'mid',
-      include: { chunks: { max_tokens: 0 }, entities: { max_tokens: 500 } },
+      include: {
+        chunks: { max_tokens: 0 },
+        entities: { max_tokens: 500 },
+      },
       max_tokens: 4096,
       query_timestamp: '2023-05-30T23:40:00',
       trace: true,
@@ -79,7 +87,7 @@ describe('resource memories', () => {
     });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retain: only required params', async () => {
     const responsePromise = client.default.banks.memories.retain('bank_id', {
       items: [{ content: 'Alice works at Google' }, { content: 'Bob went hiking yesterday' }],
@@ -93,7 +101,7 @@ describe('resource memories', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retain: required and optional params', async () => {
     const response = await client.default.banks.memories.retain('bank_id', {
       items: [
