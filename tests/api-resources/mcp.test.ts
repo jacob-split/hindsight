@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource mcp', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.mcp.create('bank_id', {
       id: 1,
@@ -24,7 +24,7 @@ describe('resource mcp', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.mcp.create('bank_id', {
       id: 1,

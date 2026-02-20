@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource operations', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.default.banks.operations.list('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource operations', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('cancel: only required params', async () => {
     const responsePromise = client.default.banks.operations.cancel('operation_id', { bank_id: 'bank_id' });
     const rawResponse = await responsePromise.asResponse();
@@ -32,7 +32,7 @@ describe('resource operations', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('cancel: required and optional params', async () => {
     const response = await client.default.banks.operations.cancel('operation_id', { bank_id: 'bank_id' });
   });

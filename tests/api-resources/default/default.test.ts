@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource default', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getChunk', async () => {
     const responsePromise = client.default.getChunk('chunk_id');
     const rawResponse = await responsePromise.asResponse();

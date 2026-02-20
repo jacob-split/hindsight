@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource stats', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.default.banks.stats.retrieve('bank_id');
     const rawResponse = await responsePromise.asResponse();
