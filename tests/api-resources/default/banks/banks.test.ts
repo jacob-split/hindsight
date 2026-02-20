@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource banks', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.default.banks.list();
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource banks', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('delete', async () => {
     const responsePromise = client.default.banks.delete('bank_id');
     const rawResponse = await responsePromise.asResponse();
@@ -32,7 +32,7 @@ describe('resource banks', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('addBackground: only required params', async () => {
     const responsePromise = client.default.banks.addBackground('bank_id', { content: 'I was born in Texas' });
     const rawResponse = await responsePromise.asResponse();
@@ -44,7 +44,7 @@ describe('resource banks', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('addBackground: required and optional params', async () => {
     const response = await client.default.banks.addBackground('bank_id', {
       content: 'I was born in Texas',
@@ -52,7 +52,7 @@ describe('resource banks', () => {
     });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('reflect: only required params', async () => {
     const responsePromise = client.default.banks.reflect('bank_id', {
       query: 'What do you think about artificial intelligence?',
@@ -66,7 +66,7 @@ describe('resource banks', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('reflect: required and optional params', async () => {
     const response = await client.default.banks.reflect('bank_id', {
       query: 'What do you think about artificial intelligence?',
@@ -76,7 +76,7 @@ describe('resource banks', () => {
     });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('updateOrCreate', async () => {
     const responsePromise = client.default.banks.updateOrCreate('bank_id', {});
     const rawResponse = await responsePromise.asResponse();

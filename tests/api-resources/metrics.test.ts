@@ -8,7 +8,7 @@ const client = new Hindsight({
 });
 
 describe('resource metrics', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.metrics.retrieve();
     const rawResponse = await responsePromise.asResponse();
